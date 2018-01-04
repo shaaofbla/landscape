@@ -3,14 +3,16 @@
 import java.io.*;
 import java.net.*;
 
-class TCPServer{
+public class TCPServer{
     public int port;
     public Socket TCPSocket;
+    public BufferedReader Reader;
 
     public TCPServer(int port){
         port = port;
         try {
-                TCPSocket = setupSocket(this.port);
+            TCPSocket = setupSocket(port);
+            Reader = setupReader();
         } catch (Exception e){
             System.out.println(e);
         }
@@ -18,30 +20,40 @@ class TCPServer{
 
     private Socket setupSocket(int _port) throws Exception{
         ServerSocket _ServerSocket = new ServerSocket(_port);
+        System.out.println("Connecting to Port: " + _port);
+        System.out.println("Waiting for the client to connect.");
         Socket connectionSocket = _ServerSocket.accept();
+        System.out.println("Client successfully connected.");
         return(connectionSocket);
+    }
+
+    private BufferedReader setupReader() throws Exception{
+        BufferedReader Reader = new BufferedReader(new InputStreamReader(TCPSocket.getInputStream()));
+        return(Reader);
     }
 
     public String readMessage(){
         String message;
-        try (BufferedReader messageFromClient =new BufferedReader(new InputStreamReader(TCPSocket.getInputStream()))){
-                message = messageFromClient.readLine();
+        try {
+            message = this.Reader.readLine();
         } catch (IOException e){
             System.out.println(e);
-            message = null;
+            message = "reader error occured.";
         }
         return(message);
     }
 }
-/*
-public static void main(String [] args){
-        String clientSentence;
-        TCPServer server = TCPServer(5007);
-        //String capitalizedSentence;
-        //ServerSocket welcomeSocket = new ServerSocket(5007);
-        //Socket connectionSocket = welcomeSocket.accept();
-        while (true) {
-            clientSentence = server.readMessage();
-            System.out.println("Received: " + clientSentence);
+
+class TestTCPServer{
+    public static void main(String args[]){
+        System.out.println("Main Function: TestTCPServer");
+        int port = 5007;
+        TCPServer testServer = new TCPServer(port);
+        String message=null;
+        for (int i=0; i<10; i++){
+            message = testServer.readMessage();
+            System.out.println("Recived coordinates: " + message);
+        }
+        System.out.println("Test complete");
     }
-    */
+}
