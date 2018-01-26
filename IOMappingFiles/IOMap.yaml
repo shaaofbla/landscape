@@ -1,0 +1,20 @@
+- toPolar: #name of the mapp
+        inVarName: #input variables
+                - Ax #camera/coordinate
+                - Ay
+        func:
+            - toPolar
+        outVarName:
+            - Aphi
+            - Arho
+---
+- invSShapeCurve: #inverted S shape Curve y = 1 - abs(sin(x * pi * 0.5))^2
+        inVarName:
+            - Ax
+        func: 
+            - invSShapeCurve
+        params:
+            - A: 0.5
+            - b: 2
+        outVarName:
+            - Ax_invSShapeCurve
